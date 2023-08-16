@@ -74,10 +74,27 @@ def prepare_data_cit(dataframe):
     dataframe = filter_cutoff_date(dataframe)
     # Remove all collumns from dataframe except for the ones listed in the config file
 
-    print("Cit Dataframe prepared successfully:")
+    print("CIT Dataframe prepared successfully:")
     print(dataframe.head())
 
     return dataframe
+
+def prepare_data_tax(dataframe_tax, dataframe_qst):
+    '''Function to prepare the data'''
+    # Preparing tax data got easy in v2. Only a dataframe with all the AHV-Codes of the entire tax register is needed.
+    dataframe_tax = dataframe_tax[[AHV_FIELD]]
+    dataframe_qst = dataframe_qst[[AHV_FIELD]]
+
+    # Combine all dataframes
+    dataframe_tax = pandas.concat([dataframe_tax, dataframe_qst], ignore_index=True)
+
+    # Remove all duplicates
+    dataframe_tax = dataframe_tax.drop_duplicates()
+
+    print("TAX Dataframe prepared successfully:")
+    print(dataframe_tax.head())
+
+    return dataframe_tax
 
 if __name__ == "__main__":
     # Configuration
