@@ -6,9 +6,13 @@ import os
 import time
 
 import pandas
+import configparser
 
 CUTOFF_DATE = "01.01.1900"
 CUTOFF_DATE_FIELD = "Zuzug_Datum"
+DATA_CIT_FORMAT = []
+
+AHV_FIELD = "AHV-VN"
 
 def load_data():
     '''Function to load the data'''
@@ -76,6 +80,15 @@ def prepare_data_cit(dataframe):
     return dataframe
 
 if __name__ == "__main__":
+    # Configuration
+    config = configparser.ConfigParser()
+    config.read('config.cfg')
+    CUTOFF_DATE = config['DATA']['CUTOFF_DATE']
+    CUTOFF_DATE_FIELD = config['DATA']['CUTOFF_DATE_FIELD']
+    DATA_CIT_FORMAT = config['DATA']['DATA_CIT_FORMAT']
+
+    AHV_FIELD = config['DATA']['AHV-FIELD']
+
     start_time = time.time()
     dataframe_cit, dataframe_tax, dataframe_qst = load_data()
     dataframe_cit = prepare_data_cit(dataframe_cit)
