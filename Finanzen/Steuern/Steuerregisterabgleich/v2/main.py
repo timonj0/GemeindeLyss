@@ -7,6 +7,9 @@ import time
 
 import pandas
 
+CUTOFF_DATE = "01.01.1900"
+CUTOFF_DATE_FIELD = "Zuzug_Datum"
+
 def load_data():
     '''Function to load the data'''
 
@@ -53,6 +56,13 @@ def load_data():
     dataframe_qst = pandas.concat(dfs, ignore_index=True)
 
     return dataframe_cit, dataframe_tax, dataframe_qst
+
+def filter_cutoff_date(dataframe):
+    '''Function to filter the dataframe by the cutoff date'''
+    dataframe[CUTOFF_DATE_FIELD] = pandas.to_datetime(dataframe[CUTOFF_DATE_FIELD], format="%d.%m.%Y")
+    dataframe = dataframe[dataframe[CUTOFF_DATE_FIELD] <= pandas.to_datetime(CUTOFF_DATE, format="%d.%m.%Y")]
+    return dataframe
+
 
 def prepare_data_cit(dataframe):
     '''Function to prepare the data'''
