@@ -96,6 +96,7 @@ def prepare_data_tax(dataframe_tax, dataframe_qst):
 
     return dataframe_tax
 
+
 def compare_data(dataframe_cit, dataframe_tax):
     '''Function to compare the data'''
     # Compare the dataframes
@@ -107,6 +108,15 @@ def compare_data(dataframe_cit, dataframe_tax):
     print(dataframe_missing.head())
 
     return dataframe_missing
+
+
+def save_data(dataframe_missing):
+    '''Function to save the data'''
+    # Save the dataframe
+    # File name "register/fehlende_%D_%M_%Y__%H_%M_%S.xlsx"
+    file_name = "register/fehlende_" + time.strftime("%d_%m_%Y__%H_%M_%S") + ".xlsx"
+    dataframe_missing.to_excel(file_name, index=False)
+    print("Dataframe saved successfully.")
 
 if __name__ == "__main__":
     # Configuration
