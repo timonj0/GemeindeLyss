@@ -96,6 +96,18 @@ def prepare_data_tax(dataframe_tax, dataframe_qst):
 
     return dataframe_tax
 
+def compare_data(dataframe_cit, dataframe_tax):
+    '''Function to compare the data'''
+    # Compare the dataframes
+    dataframe_missing = pandas.merge(dataframe_cit, dataframe_tax, on=AHV_FIELD, how='left', indicator=True)
+    dataframe_missing = dataframe_missing[dataframe_missing['_merge'] == 'left_only']
+    dataframe_missing = dataframe_missing.drop(columns=['_merge'])
+
+    print("Comparison of dataframes successful.")
+    print(dataframe_missing.head())
+
+    return dataframe_missing
+
 if __name__ == "__main__":
     # Configuration
     config = configparser.ConfigParser()
