@@ -54,6 +54,16 @@ def load_data():
 
     return dataframe_cit, dataframe_tax, dataframe_qst
 
+def prepare_data_cit(dataframe):
+    '''Function to prepare the data'''
+    # Filter the dataframe by the cutoff date
+    dataframe = filter_cutoff_date(dataframe)
+    # Remove all collumns from dataframe except for the ones listed in the config file
+
+    print("Cit Dataframe prepared successfully:")
+    print(dataframe.head())
+
+    return dataframe
 
 if __name__ == "__main__":
     start_time = time.time()
