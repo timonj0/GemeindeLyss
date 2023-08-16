@@ -1,4 +1,4 @@
-'''Steuerregisterabgleich v. 2.0'''
+'''Steuerregisterabgleich v. 2.1'''
 # Author: Timon Jakob
 # Date: 08.2023
 
@@ -117,6 +117,16 @@ def save_data(dataframe_missing):
     file_name = "register/fehlende_" + time.strftime("%d_%m_%Y__%H_%M_%S") + ".xlsx"
     dataframe_missing.to_excel(file_name, index=False)
     print("Dataframe saved successfully.")
+
+
+def print_statistics(dataframe_cit, dataframe_tax, dataframe_missing, runtime):
+    '''Function to print statistics'''
+    print("\n\n")
+    print("Statistik:")
+    print(f"Einträge Einwohnerregister:    {len(dataframe_cit)}")
+    print(f"Einträge Steuerregister:       {len(dataframe_tax)}")
+    print(f"Fehlende Einträge SR:          {len(dataframe_missing)}")
+    print(f"Runtime: {runtime} sekunden")
 
 if __name__ == "__main__":
     # Configuration
