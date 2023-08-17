@@ -1,4 +1,5 @@
 @echo off
+title Steuerregisterabgleich Setup
 echo Steuerregisterabgleich Setup
 echo Updating pip
 python -m pip install --upgrade pip
