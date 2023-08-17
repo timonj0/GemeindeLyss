@@ -141,6 +141,7 @@ def print_statistics(dataframe_cit, dataframe_tax, dataframe_missing, runtime):
 
 
 def run():
+    '''Main function'''
     start_time = time.time()
     dataframe_cit, dataframe_tax, dataframe_qst = load_data()
     dataframe_cit = prepare_data_cit(dataframe_cit)
@@ -165,4 +166,3 @@ if __name__ == "__main__":
     TAX_AHV_FIELD = config['DATA']['TAX_AHV_FIELD']
 
     run()
-    
