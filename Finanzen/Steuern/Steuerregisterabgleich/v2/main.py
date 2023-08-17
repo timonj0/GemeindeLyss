@@ -29,6 +29,8 @@ def load_data():
     dfs = []
     for file in files:
         dataframe = pandas.read_excel('register/reg_cit/' + file)
+        # Add the filename as a column
+        dataframe['Ursprung'] = file
         print(f"Register file {file} read successfully")
         dfs.append(dataframe)
 
