@@ -9,6 +9,8 @@ import configparser
 
 import json
 import pandas
+import tkinter as tk
+from tkinterdnd2 import DND_FILES, TkinterDnD
 
 CUTOFF_DATE = "01.01.1900"
 CUTOFF_DATE_FILTER = True
@@ -139,6 +141,18 @@ def print_statistics(dataframe_cit, dataframe_tax, dataframe_missing, runtime):
     print(f"Laufzeit:                      {round(runtime, 2)} Sekunden")
     print("----------------------------------------------------")
 
+def run():
+    start_time = time.time()
+    dataframe_cit, dataframe_tax, dataframe_qst = load_data()
+    dataframe_cit = prepare_data_cit(dataframe_cit)
+    dataframe_tax = prepare_data_tax(dataframe_tax, dataframe_qst)
+    dataframe_missing = compare_data(dataframe_cit, dataframe_tax)
+    save_data(dataframe_missing)
+    runtime = time.time() - start_time
+    print_statistics(dataframe_cit, dataframe_tax, dataframe_missing, runtime)
+    print("\n")
+    input("Press Enter to exit...     ")
+
 if __name__ == "__main__":
     # Configuration
     config = configparser.ConfigParser()
@@ -151,13 +165,5 @@ if __name__ == "__main__":
 
     TAX_AHV_FIELD = config['DATA']['TAX_AHV_FIELD']
 
-    start_time = time.time()
-    dataframe_cit, dataframe_tax, dataframe_qst = load_data()
-    dataframe_cit = prepare_data_cit(dataframe_cit)
-    dataframe_tax = prepare_data_tax(dataframe_tax, dataframe_qst)
-    dataframe_missing = compare_data(dataframe_cit, dataframe_tax)
-    save_data(dataframe_missing)
-    runtime = time.time() - start_time
-    print_statistics(dataframe_cit, dataframe_tax, dataframe_missing, runtime)
-    print("\n")
-    input("Press Enter to exit...     ")
+    run()
+    
