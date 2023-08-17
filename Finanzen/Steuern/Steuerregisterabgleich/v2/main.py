@@ -158,3 +158,5 @@ if __name__ == "__main__":
     save_data(dataframe_missing)
     runtime = time.time() - start_time
     print_statistics(dataframe_cit, dataframe_tax, dataframe_missing, runtime)
+    print("\n")
+    input("Press Enter to exit...     ")
