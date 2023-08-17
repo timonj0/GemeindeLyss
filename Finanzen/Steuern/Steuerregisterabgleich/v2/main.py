@@ -9,6 +9,7 @@ import pandas
 import configparser
 
 CUTOFF_DATE = "01.01.1900"
+CUTOFF_DATE_FILTER = True
 CUTOFF_DATE_FIELD = "Zuzug_Datum"
 DATA_CIT_FORMAT = []
 
@@ -70,10 +71,11 @@ def filter_cutoff_date(dataframe):
 
 def prepare_data_cit(dataframe):
     '''Function to prepare the data'''
-    # Filter the dataframe by the cutoff date
-    dataframe = filter_cutoff_date(dataframe)
+    if CUTOFF_DATE_FILTER
+        # Filter the dataframe by the cutoff date
+        dataframe = filter_cutoff_date(dataframe)
     # Remove all collumns from dataframe except for the ones listed in the config file
-
+    dataframe = dataframe[DATA_CIT_FORMAT]
     print("CIT Dataframe prepared successfully:")
     print(dataframe.head())
 
@@ -133,6 +135,7 @@ if __name__ == "__main__":
     config = configparser.ConfigParser()
     config.read('config.cfg')
     CUTOFF_DATE = config['DATA']['CUTOFF_DATE']
+    CUTOFF_DATE_FILTER = config['DATA']['CUTOFF_DATE_FILTER']
     CUTOFF_DATE_FIELD = config['DATA']['CUTOFF_DATE_FIELD']
     DATA_CIT_FORMAT = config['DATA']['DATA_CIT_FORMAT']
 
