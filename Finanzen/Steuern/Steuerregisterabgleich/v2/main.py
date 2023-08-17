@@ -131,12 +131,13 @@ def save_data(dataframe):
 
 def print_statistics(dataframe_cit, dataframe_tax, dataframe_missing, runtime):
     '''Function to print statistics'''
-    print("\n\n")
-    print("Statistik:")
+    print("\n\nSteuerregisterabgleich Erfolgreich\n\n")
+    print("-------------------- Statistik: --------------------")
     print(f"Einträge Einwohnerregister:    {len(dataframe_cit)}")
     print(f"Einträge Steuerregister:       {len(dataframe_tax)}")
     print(f"Fehlende Einträge SR:          {len(dataframe_missing)}")
-    print(f"Runtime: {runtime} sekunden")
+    print(f"Laufzeit:                      {round(runtime, 2)} Sekunden")
+    print("----------------------------------------------------")
 
 if __name__ == "__main__":
     # Configuration
