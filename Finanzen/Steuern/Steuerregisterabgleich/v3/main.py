@@ -41,8 +41,8 @@ def print_help_find():
     '''Prints the help for the find command'''
     print("Find Befehl:")
     print(" - 'find help': Zeigt diese Hilfe an.")
-    print(" - find <tabelle_1> missing_in <tabelle_2>: Findet alle Einträge in Tabelle 1, die nicht in Tabelle 2 vorhanden sind.")
-    print(" - find <tabelle_1> missing_in <tabelle_2> on <spalte>: Findet alle Einträge in Tabelle 1, die nicht in Tabelle 2 vorhanden sind anhand einer bestimmten Spalte. Die Spalte muss in beiden Tabellen vorhanden sein und sollte für jeden Eintrag eindeutig sein.")
+    print(" - 'find <tabelle_1> missing_in <tabelle_2>': Findet alle Einträge in Tabelle 1, die nicht in Tabelle 2 vorhanden sind.")
+    print(" - 'find <tabelle_1> missing_in <tabelle_2> on <spalte>': Findet alle Einträge in Tabelle 1, die nicht in Tabelle 2 vorhanden sind anhand einer bestimmten Spalte. Die Spalte muss in beiden Tabellen vorhanden sein und sollte für jeden Eintrag eindeutig sein.")
 
 
 def main_loop():
