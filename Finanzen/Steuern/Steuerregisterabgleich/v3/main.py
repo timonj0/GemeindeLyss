@@ -35,6 +35,20 @@ def load_on_start(args: list):
         print(f"Tabelle '{table_name}' erfolgreich geladen.")
 
 
+def filter_by_date(df: pandas.DataFrame, column: str, filter_by: str, date: str) -> pandas.DataFrame:
+    '''filter a table by a date. The date must be in the format DD.MM.YYYY. Can filter_by by before, after or on equal'''
+    date = pandas.to_datetime(date, format="%d.%m.%Y")
+    if filter_by == "before":
+        return df[pandas.to_datetime(df[column], format="%d.%m.%Y") < pandas.to_datetime(date, format="%d.%m.%Y")]
+    elif filter_by == "after":
+        return df[pandas.to_datetime(df[column], format="%d.%m.%Y") > pandas.to_datetime(date, format="%d.%m.%Y")]
+    elif filter_by == "on":
+        return df[pandas.to_datetime(df[column], format="%d.%m.%Y") == pandas.to_datetime(date, format="%d.%m.%Y")]
+    else:
+        print("Ungültiger Filter. Verwenden Sie 'before', 'after' oder 'on'.")
+        return df
+
+
 def print_table_pretty(table: pandas.DataFrame):
     '''Prints a table in a pretty format'''
     print(table.to_string(index=False))
@@ -47,9 +61,10 @@ def print_help():
     print(" - 'quit': Beendet das Programm")
     print(" - 'load <excel/csv> <tabellenname> <dateiname>': Lädt eine Tabelle aus einer Excel- oder CSV-Datei.")
     print(" - 'show <tabellenname> <(anzahl)>': Zeigt die ersten n Zeilen der Tabelle an. Standardmäßig 5 Zeilen. 0 zeigt alle Zeilen an.")
-    print(" - 'find': 'find help' für Hilfe zum Befehl 'find'.")
     print(" - 'save <tabellenname>': Sichert das Resultat der letzten Abfrage in einer Tabelle.")
     print(" - 'export <tabellenname> <dateiname>': Exportiert eine Tabelle in eine Excel-Datei.")
+    print(" - 'find': 'find help' für Hilfe zum Befehl 'find'.")
+    print(" - 'filter_by_date <tabellenname> <spalte> <'before'/'after'/'on'> <datum>': Filtert eine Tabelle nach einem Datum. Das Datum muss im Format DD.MM.YYYY sein.")
 
 
 def print_help_find():
@@ -263,6 +278,37 @@ def main_loop():
             # Invalid find subcommand
             else:
                 print_help_find()
+
+        # Filter by date command
+        elif action == "filter_by_date":
+
+            # Check if the correct number of arguments is given
+            if len(args) != 4:
+                print(
+                    "Ungültige Anzahl an Argumenten. Verwenden Sie 'help' um Hilfe zu erhalten.")
+                continue
+
+            table_name = args[0]
+            column = args[1]
+            filter_by = args[2]
+            date = args[3]
+
+            # Check if the table exists
+            if table_name not in session_dataframes:
+                print(f"Die Tabelle '{table_name}' existiert nicht.")
+                continue
+
+            # Check if the column exists
+            if column not in session_dataframes[table_name].columns:
+                print(
+                    f"Die Spalte '{column}' existiert nicht in der Tabelle '{table_name}'.")
+                continue
+
+            # Filter the table
+            filtered_table = filter_by_date(
+                session_dataframes[table_name], column, filter_by, date)
+            last_query_result = filtered_table
+            print_table_pretty(filtered_table)
 
         # Invalid action
         else:
