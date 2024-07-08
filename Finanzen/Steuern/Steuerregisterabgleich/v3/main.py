@@ -4,6 +4,7 @@
 # Date: 07.2023
 
 import os
+import sys
 import pandas
 
 # HashMap to store the dataframes with the corresponding name
@@ -18,6 +19,20 @@ def load_table_from_excel(file_path: str) -> pandas.DataFrame:
     df.columns = df.columns.str.strip().str.lower()
 
     return df
+
+
+def load_on_start(args: list):
+    '''Load tables on start'''
+    for i in range(1, len(args), 2):
+        file_name = args[i]
+        table_name = args[i+1]
+
+        if not os.path.exists(file_name):
+            print(f"Datei '{file_name}' existiert nicht.")
+            continue
+
+        session_dataframes[table_name] = load_table_from_excel(file_name)
+        print(f"Tabelle '{table_name}' erfolgreich geladen.")
 
 
 def print_table_pretty(table: pandas.DataFrame):
@@ -216,6 +231,7 @@ def main_loop():
                     table2 = session_dataframes[args[2]]
 
                     missing = table1[~table1.isin(table2)].dropna()
+                    last_query_result = missing
                     print_table_pretty(missing)
 
                 # missing_in ON subcommand
@@ -241,6 +257,7 @@ def main_loop():
                         continue
 
                     missing = table1[~table1[column].isin(table2[column])]
+                    last_query_result = missing
                     print_table_pretty(missing)
 
             # Invalid find subcommand
@@ -256,5 +273,9 @@ if __name__ == "__main__":
     print("Steuernregisterabgleich")
     print("v3.0 - Juli 2024\n")
     print("Für hilfe geben Sie 'help' ein.\n")
+
+    args = sys.argv[1:]
+    if args[0] == "-load":
+        load_on_start(args)
 
     main_loop()
