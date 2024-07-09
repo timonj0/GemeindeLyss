@@ -392,7 +392,7 @@ if __name__ == "__main__":
     print("Für hilfe geben Sie 'help' ein.\n")
 
     args = sys.argv[1:]
-    if args[0] == "-load":
+    if len(args) > 0 and args[0] == "-load":
         load_on_start(args)
 
     main_loop()
