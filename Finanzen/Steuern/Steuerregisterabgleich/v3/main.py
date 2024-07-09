@@ -260,7 +260,7 @@ def main_loop():
 
                     missing = table1[~table1.isin(table2)].dropna()
                     last_query_result = missing
-                    print_table_pretty(missing)
+                    print_table_pretty(missing, missing.shape[0])
 
                 # missing_in ON subcommand
                 else:
@@ -286,7 +286,7 @@ def main_loop():
 
                     missing = table1[~table1[column].isin(table2[column])]
                     last_query_result = missing
-                    print_table_pretty(missing)
+                    print_table_pretty(missing, missing.shape[0])
 
             # Invalid find subcommand
             else:
@@ -321,7 +321,7 @@ def main_loop():
             filtered_table = filter_by_date(
                 session_dataframes[table_name], column, filter_by, date)
             last_query_result = filtered_table
-            print_table_pretty(filtered_table)
+            print_table_pretty(filtered_table, filtered_table.shape[0])
 
 
         # Combine command
