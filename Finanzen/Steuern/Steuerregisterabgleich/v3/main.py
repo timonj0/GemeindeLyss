@@ -58,6 +58,14 @@ def rename_column(df: pandas.DataFrame, old_name: str, new_name: str) -> pandas.
     df.rename(columns={old_name: new_name}, inplace=True)
     return df
 
+def find_in_table(df1: pandas.DataFrame, df2: pandas.DataFrame) -> pandas.DataFrame:
+    '''Find all entries in df1 that are also in df2'''
+    return df1[df1.isin(df2).all(1)]
+
+def find_in_table_on_column(df1: pandas.DataFrame, df2: pandas.DataFrame, column: str) -> pandas.DataFrame:
+    '''Find all entries in df1 that are also in df2 based on a column'''
+    return df1[df1[column].isin(df2[column])]
+ 
 
 def print_table_pretty(table: pandas.DataFrame, total_rows: int):
     '''Prints a table in a pretty format'''
@@ -74,8 +82,8 @@ def print_help():
     print(" - 'show <tabellenname> <(anzahl)>': Zeigt die ersten n Zeilen der Tabelle an. Standardmäßig 5 Zeilen. 0 zeigt alle Zeilen an.")
     print(" - 'save <tabellenname>': Sichert das Resultat der letzten Abfrage in einer Tabelle.")
     print(" - 'export <tabellenname> <dateiname>': Exportiert eine Tabelle in eine Excel-Datei.")
-    print(" - rename <tabellenname> <spalte_alt> <spalte_neu>: Benennt eine Spalte in einer Tabelle um.")
-    print(" - combine <tabellenname_1> <tabellenname_2> <tabellenname_neu>: Kombiniert zwei Tabellen und speichert das Resultat in einer neuen Tabelle.")
+    print(" - 'rename <tabellenname> <spalte_alt> <spalte_neu>': Benennt eine Spalte in einer Tabelle um.")
+    print(" - 'combine <tabellenname_1> <tabellenname_2> <tabellenname_neu>': Kombiniert zwei Tabellen und speichert das Resultat in einer neuen Tabelle.")
     print(" - 'find': 'find help' für Hilfe zum Befehl 'find'.")
     print(" - 'filter_by_date <tabellenname> <spalte> <'before'/'after'/'on'> <datum>': Filtert eine Tabelle nach einem Datum. Das Datum muss im Format DD.MM.YYYY sein.")
 
@@ -84,6 +92,8 @@ def print_help_find():
     '''Prints the help for the find command'''
     print("Find Befehl:")
     print(" - 'find help': Zeigt diese Hilfe an.")
+    print(" - 'find <tabelle_1> in <tabelle_2>': Findet alle Einträge in Tabelle 1, die auch in Tabelle 2 vorhanden sind.")
+    print(" - 'find <tabelle_1> in <tabelle_2>' on <spaltenname>: Findet alle Einträge in Tabelle 1, die auch in Tabelle 2 vorhanden sind anhand einer Spalte. Die Spalte muss in beiden Tabellen vorhanden sein")
     print(" - 'find <tabelle_1> missing_in <tabelle_2>': Findet alle Einträge in Tabelle 1, die nicht in Tabelle 2 vorhanden sind.")
     print(" - 'find <tabelle_1> missing_in <tabelle_2> on <spalte>': Findet alle Einträge in Tabelle 1, die nicht in Tabelle 2 vorhanden sind anhand einer bestimmten Spalte. Die Spalte muss in beiden Tabellen vorhanden sein und sollte für jeden Eintrag eindeutig sein.")
 
@@ -288,6 +298,49 @@ def main_loop():
                     last_query_result = missing
                     print_table_pretty(missing, missing.shape[0])
 
+            # find in subcommand
+            elif args[1] == "in":
+                # Check if the correct number of arguments is given
+                if not (len(args) == 3 or len(args) == 5):
+                    print(
+                        "Ungültige Anzahl an Argumenten. Verwenden Sie 'help' um Hilfe zu erhalten.")
+                    continue
+
+                # find in base command
+                if len(args) == 3:
+                    # Check if the tables exist
+                    if args[0] not in session_dataframes or args[2] not in session_dataframes:
+                        print("Eine der Tabellen existiert nicht.")
+                        continue
+
+                    table1 = session_dataframes[args[0]]
+                    table2 = session_dataframes[args[2]]
+
+                    found = find_in_table(table1, table2)
+                    last_query_result = found
+                    print_table_pretty(found, found.shape[0])
+
+                # find in ON subcommand
+                else:
+                    # Check if the tables exist
+                    if args[0] not in session_dataframes or args[2] not in session_dataframes:
+                        print("Eine der Tabellen existiert nicht.")
+                        continue
+
+                    table1 = session_dataframes[args[0]]
+                    table2 = session_dataframes[args[2]]
+
+                    column = args[4]
+
+                    # Check if the column exists in both tables
+                    if column not in table1.columns or column not in table2.columns:
+                        print("Die Spalte existiert nicht in beiden Tabellen.")
+                        continue
+
+                    found = find_in_table_on_column(table1, table2, column)
+                    last_query_result = found
+                    print_table_pretty(found, found.shape[0])
+
             # Invalid find subcommand
             else:
                 print_help_find()
@@ -380,6 +433,7 @@ def main_loop():
                 session_dataframes[table_name] = renamed_table
                 print(
                     f"Spalte '{old_name}' in Tabelle '{table_name}' erfolgreich in '{new_name}' umbenannt.")
+
 
         # Invalid action
         else:
