@@ -61,6 +61,7 @@ def rename_column(df: pandas.DataFrame, old_name: str, new_name: str) -> pandas.
 
 def print_table_pretty(table: pandas.DataFrame):
     '''Prints a table in a pretty format'''
+    print(f"Zeilen: {table.shape[0]}\n\n")
     print(table.to_string(index=False))
 
 
