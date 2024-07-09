@@ -59,9 +59,9 @@ def rename_column(df: pandas.DataFrame, old_name: str, new_name: str) -> pandas.
     return df
 
 
-def print_table_pretty(table: pandas.DataFrame, total_rows: int = 0):
+def print_table_pretty(table: pandas.DataFrame, total_rows: int):
     '''Prints a table in a pretty format'''
-    print(f"Zeilen: {total_rows if total_rows != 0 else table.shape[0]}")
+    print(f"Zeilen: {total_rows}")
     print(table.to_string(index=False))
 
 
@@ -173,7 +173,7 @@ def main_loop():
 
             # Show the rows
             if num_rows == 0:
-                print_table_pretty(session_dataframes[table_name], 0)
+                print_table_pretty(session_dataframes[table_name], session_dataframes[table_name].shape[0])
             else:
                 print_table_pretty(
                     session_dataframes[table_name].head(num_rows), session_dataframes[table_name].shape[0])
