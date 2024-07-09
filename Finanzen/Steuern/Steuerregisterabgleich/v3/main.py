@@ -72,6 +72,14 @@ def print_table_pretty(table: pandas.DataFrame, total_rows: int):
     print(f"Zeilen: {total_rows}")
     print(table.to_string(index=False))
 
+def change_all(df: pandas.DataFrame, old_value: str, new_value: str) -> pandas.DataFrame:
+    '''Change all occurences of old_value to new_value in a dataframe'''
+    return df.replace(old_value, new_value)
+
+def compare_rows(df1: pandas.DataFrame, df2: pandas.DataFrame, columns_to_compare: list) -> pandas.DataFrame:
+    '''Compare two dataframes based on a list of columns and return rows that are different'''
+    return df1[~df1[columns_to_compare].isin(df2[columns_to_compare]).all(1)]
+
 
 def print_help():
     '''Prints the help'''
@@ -83,7 +91,9 @@ def print_help():
     print(" - 'save <tabellenname>': Sichert das Resultat der letzten Abfrage in einer Tabelle.")
     print(" - 'export <tabellenname> <dateiname>': Exportiert eine Tabelle in eine Excel-Datei.")
     print(" - 'rename <tabellenname> <spalte_alt> <spalte_neu>': Benennt eine Spalte in einer Tabelle um.")
+    print(" - 'change_all <tabellenname> <wert_alt> <wert_neu>': Ändert alle Vorkommen eines Wertes in einer Tabelle.")
     print(" - 'combine <tabellenname_1> <tabellenname_2> <tabellenname_neu>': Kombiniert zwei Tabellen und speichert das Resultat in einer neuen Tabelle.")
+    print(" - 'compare <tabellenname_1> <tabellenname_2> <spalte_1> <...> <spalte_n>': Vergleicht zwei Tabellen anhand von Spalten und gibt die Unterschiede zurück.")
     print(" - 'find': 'find help' für Hilfe zum Befehl 'find'.")
     print(" - 'filter_by_date <tabellenname> <spalte> <'before'/'after'/'on'> <datum>': Filtert eine Tabelle nach einem Datum. Das Datum muss im Format DD.MM.YYYY sein.")
 
@@ -434,6 +444,61 @@ def main_loop():
                 print(
                     f"Spalte '{old_name}' in Tabelle '{table_name}' erfolgreich in '{new_name}' umbenannt.")
 
+        # Change all command
+        elif action == "change_all":
+                
+                # Check if the correct number of arguments is given
+                if len(args) != 3:
+                    print(
+                        "Ungültige Anzahl an Argumenten. Verwenden Sie 'help' um Hilfe zu erhalten.")
+                    continue
+    
+                table_name = args[0]
+                old_value = args[1]
+                new_value = args[2]
+    
+                # Check if the table exists
+                if table_name not in session_dataframes:
+                    print(f"Die Tabelle '{table_name}' existiert nicht.")
+                    continue
+    
+                # Change all occurences of the value
+                changed_table = change_all(
+                    session_dataframes[table_name], old_value, new_value)
+                session_dataframes[table_name] = changed_table
+                print(
+                    f"Alle Vorkommen von '{old_value}' in Tabelle '{table_name}' erfolgreich in '{new_value}' geändert.")
+                
+        # Compare command
+        elif action == "compare":
+                    
+                    # Check if the correct number of arguments is given
+                    if len(args) < 4:
+                        print(
+                            "Ungültige Anzahl an Argumenten. Verwenden Sie 'help' um Hilfe zu erhalten.")
+                        continue
+        
+                    table1_name = args[0]
+                    table2_name = args[1]
+                    columns = args[2:]
+        
+                    # Check if the tables exist
+                    if table1_name not in session_dataframes or table2_name not in session_dataframes:
+                        print("Eine der Tabellen existiert nicht.")
+                        continue
+        
+                    # Check if the columns exist
+                    for column in columns:
+                        if column not in session_dataframes[table1_name].columns or column not in session_dataframes[table2_name].columns:
+                            print(
+                                f"Die Spalte '{column}' existiert nicht in beiden Tabellen.")
+                            continue
+        
+                    # Compare the tables
+                    compared_table = compare_rows(
+                        session_dataframes[table1_name], session_dataframes[table2_name], columns)
+                    last_query_result = compared_table
+                    print_table_pretty(compared_table, compared_table.shape[0])
 
         # Invalid action
         else:
