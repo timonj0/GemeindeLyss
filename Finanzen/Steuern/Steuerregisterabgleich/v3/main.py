@@ -53,6 +53,11 @@ def combine_tables(df1: pandas.DataFrame, df2: pandas.DataFrame):
     '''Combine two dataframes'''
     return pandas.concat([df1, df2])
 
+def rename_column(df: pandas.DataFrame, old_name: str, new_name: str) -> pandas.DataFrame:
+    '''Rename a column in a dataframe'''
+    df.rename(columns={old_name: new_name}, inplace=True)
+    return df
+
 
 def print_table_pretty(table: pandas.DataFrame):
     '''Prints a table in a pretty format'''
@@ -68,6 +73,7 @@ def print_help():
     print(" - 'show <tabellenname> <(anzahl)>': Zeigt die ersten n Zeilen der Tabelle an. Standardmäßig 5 Zeilen. 0 zeigt alle Zeilen an.")
     print(" - 'save <tabellenname>': Sichert das Resultat der letzten Abfrage in einer Tabelle.")
     print(" - 'export <tabellenname> <dateiname>': Exportiert eine Tabelle in eine Excel-Datei.")
+    print(" - rename <tabellenname> <spalte_alt> <spalte_neu>: Benennt eine Spalte in einer Tabelle um.")
     print(" - combine <tabellenname_1> <tabellenname_2> <tabellenname_neu>: Kombiniert zwei Tabellen und speichert das Resultat in einer neuen Tabelle.")
     print(" - 'find': 'find help' für Hilfe zum Befehl 'find'.")
     print(" - 'filter_by_date <tabellenname> <spalte> <'before'/'after'/'on'> <datum>': Filtert eine Tabelle nach einem Datum. Das Datum muss im Format DD.MM.YYYY sein.")
@@ -341,6 +347,38 @@ def main_loop():
             session_dataframes[new_table_name] = combined_table
             print(
                 f"Tabellen '{table1_name}' und '{table2_name}' erfolgreich kombiniert und als '{new_table_name}' gespeichert.")
+
+
+        # Rename command
+        elif action == "rename":
+                
+                # Check if the correct number of arguments is given
+                if len(args) != 3:
+                    print(
+                        "Ungültige Anzahl an Argumenten. Verwenden Sie 'help' um Hilfe zu erhalten.")
+                    continue
+    
+                table_name = args[0]
+                old_name = args[1]
+                new_name = args[2]
+    
+                # Check if the table exists
+                if table_name not in session_dataframes:
+                    print(f"Die Tabelle '{table_name}' existiert nicht.")
+                    continue
+    
+                # Check if the column exists
+                if old_name not in session_dataframes[table_name].columns:
+                    print(
+                        f"Die Spalte '{old_name}' existiert nicht in der Tabelle '{table_name}'.")
+                    continue
+    
+                # Rename the column
+                renamed_table = rename_column(
+                    session_dataframes[table_name], old_name, new_name)
+                session_dataframes[table_name] = renamed_table
+                print(
+                    f"Spalte '{old_name}' in Tabelle '{table_name}' erfolgreich in '{new_name}' umbenannt.")
 
         # Invalid action
         else:
