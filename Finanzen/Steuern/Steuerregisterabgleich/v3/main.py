@@ -49,6 +49,11 @@ def filter_by_date(df: pandas.DataFrame, column: str, filter_by: str, date: str)
         return df
 
 
+def combine_tables(df1: pandas.DataFrame, df2: pandas.DataFrame):
+    '''Combine two dataframes'''
+    return pandas.concat([df1, df2])
+
+
 def print_table_pretty(table: pandas.DataFrame):
     '''Prints a table in a pretty format'''
     print(table.to_string(index=False))
@@ -63,6 +68,7 @@ def print_help():
     print(" - 'show <tabellenname> <(anzahl)>': Zeigt die ersten n Zeilen der Tabelle an. Standardmäßig 5 Zeilen. 0 zeigt alle Zeilen an.")
     print(" - 'save <tabellenname>': Sichert das Resultat der letzten Abfrage in einer Tabelle.")
     print(" - 'export <tabellenname> <dateiname>': Exportiert eine Tabelle in eine Excel-Datei.")
+    print(" - combine <tabellenname_1> <tabellenname_2> <tabellenname_neu>: Kombiniert zwei Tabellen und speichert das Resultat in einer neuen Tabelle.")
     print(" - 'find': 'find help' für Hilfe zum Befehl 'find'.")
     print(" - 'filter_by_date <tabellenname> <spalte> <'before'/'after'/'on'> <datum>': Filtert eine Tabelle nach einem Datum. Das Datum muss im Format DD.MM.YYYY sein.")
 
@@ -309,6 +315,32 @@ def main_loop():
                 session_dataframes[table_name], column, filter_by, date)
             last_query_result = filtered_table
             print_table_pretty(filtered_table)
+
+
+        # Combine command
+        elif action == "combine":
+
+            # Check if the correct number of arguments is given
+            if len(args) != 3:
+                print(
+                    "Ungültige Anzahl an Argumenten. Verwenden Sie 'help' um Hilfe zu erhalten.")
+                continue
+
+            table1_name = args[0]
+            table2_name = args[1]
+            new_table_name = args[2]
+
+            # Check if the tables exist
+            if table1_name not in session_dataframes or table2_name not in session_dataframes:
+                print("Eine der Tabellen existiert nicht.")
+                continue
+
+            # Combine the tables
+            combined_table = combine_tables(
+                session_dataframes[table1_name], session_dataframes[table2_name])
+            session_dataframes[new_table_name] = combined_table
+            print(
+                f"Tabellen '{table1_name}' und '{table2_name}' erfolgreich kombiniert und als '{new_table_name}' gespeichert.")
 
         # Invalid action
         else:
